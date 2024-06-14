@@ -7,5 +7,5 @@ import (
 )
 
 type ClimateDataRepository interface {
-	SaveClimateData(ctx context.Context, entity *entities.ClimateDataEntity) (err error)
+	CreateClimateData(ctx context.Context, entity *entities.ClimateDataEntity) (err error)
 }
