@@ -13,13 +13,18 @@ type ClimateDataModel struct {
 	gorm.Model
 
 	// Relationships
-	Device *DevicesModel `gorm:"foreignKey:DeviceID;references:ID"`
+	Device *IOTDeviceModel `gorm:"foreignKey:DeviceID;references:ID"`
 }
 
-func (rm *ClimateDataModel) BeforeCreate() {
+func (rm *ClimateDataModel) BeforeCreate(tx *gorm.DB) (err error) {
 	newID, err := uuid.NewV7()
 	if err != nil {
-		newID = uuid.New()
+		return err
 	}
 	rm.ID = &newID
+	return
+}
+
+func (rm *ClimateDataModel) TableName() string {
+	return "climate_data"
 }

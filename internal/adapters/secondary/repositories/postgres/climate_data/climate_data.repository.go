@@ -3,7 +3,7 @@ package repositories
 import (
 	"context"
 
-	"github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/secondary/repositories/postgres/climate_data/mappers"
+	"github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/secondary/repositories/mappers"
 	entities "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/domain/entities/climate_data"
 	"gorm.io/gorm"
 )
@@ -26,5 +26,5 @@ func (cdr *ClimateDataRepository) CreateClimateData(ctx context.Context, entity 
 	if err := cdr.db.Create(&model).Error; err != nil {
 		return "", err
 	}
-	return entity.ID, nil
+	return model.ID.String(), nil
 }

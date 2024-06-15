@@ -5,16 +5,21 @@ import (
 	"gorm.io/gorm"
 )
 
-type DevicesModel struct {
+type IOTDeviceModel struct {
 	ID         *uuid.UUID `gorm:"type:uuid;primaryKey;not null"`
 	MACAddress string     `gorm:"type:varchar(17);not null;unique"`
 	gorm.Model
 }
 
-func (rm *DevicesModel) BeforeCreate() {
+func (rm *IOTDeviceModel) BeforeCreate(tx *gorm.DB) (err error) {
 	newID, err := uuid.NewV7()
 	if err != nil {
-		newID = uuid.New()
+		return err
 	}
 	rm.ID = &newID
+	return
+}
+
+func (rm *IOTDeviceModel) TableName() string {
+	return "iot_device"
 }
