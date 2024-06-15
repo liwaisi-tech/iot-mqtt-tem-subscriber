@@ -3,5 +3,5 @@ package utils
 import "os"
 
 func IsProduction() bool {
-	return os.Getenv("ENV") == "production"
+	return os.Getenv("ENV") == "pdn"
 }

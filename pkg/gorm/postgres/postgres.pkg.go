@@ -9,6 +9,8 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	utils "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/infraestructure/utils"
 )
 
 var (
@@ -40,7 +42,9 @@ func newDBConnection() (db *gorm.DB, err error) {
 	sqlDB.SetMaxOpenConns(maxOpenConns)
 	maxLifeTime, _ := strconv.Atoi(os.Getenv("GORM_MAX_LIFE_TIME"))
 	sqlDB.SetConnMaxLifetime(time.Minute * time.Duration(maxLifeTime))
-
+	if !utils.IsProduction() {
+		db = db.Debug()
+	}
 	return
 }
 
