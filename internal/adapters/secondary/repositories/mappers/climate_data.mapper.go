@@ -8,15 +8,23 @@ import (
 )
 
 func MapClimateDataEntityToModel(entity *entities.ClimateDataEntity) (model *models.ClimateDataModel, err error) {
-	id, err := uuid.Parse(entity.ID)
-	if err != nil {
-		log.Error().Err(err).Msg("error parsing uuid from entity.ID")
-		return nil, err
+	if entity == nil {
+		return nil, nil
 	}
-	deviceID, err := uuid.Parse(entity.DeviceID)
-	if err != nil {
-		log.Error().Err(err).Msg("error parsing uuid from entity.DeviceID")
-		return nil, err
+	var id, deviceID uuid.UUID
+	if entity.ID != "" {
+		id, err = uuid.Parse(entity.ID)
+		if err != nil {
+			log.Error().Err(err).Msg("error parsing uuid from entity.ID")
+			return nil, err
+		}
+	}
+	if entity.DeviceID != "" {
+		deviceID, err = uuid.Parse(entity.DeviceID)
+		if err != nil {
+			log.Error().Err(err).Msg("error parsing uuid from entity.DeviceID")
+			return nil, err
+		}
 	}
 	model = &models.ClimateDataModel{
 		ID:          &id,

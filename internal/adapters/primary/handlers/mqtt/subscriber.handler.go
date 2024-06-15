@@ -1,26 +1,29 @@
 package handlers
 
 import (
+	"context"
 	"os"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	repositories "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/ports/repositories/climate_data"
+	usecaseports "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/ports/usecases"
 	"github.com/rs/zerolog/log"
 )
 
 type SubscriberHandler struct {
-	climateDataRepository repositories.ClimateDataRepositoryPort
+	ctx                    context.Context
+	saveClimateDataUseCase usecaseports.SaveClimateDataUseCasePort
 }
 type mqttMessage struct {
 	topic   string
-	message string
+	message []byte
 }
 
 func New(
-	climateDataRepository repositories.ClimateDataRepositoryPort,
+	ctx context.Context,
+	saveClimateDataUseCase usecaseports.SaveClimateDataUseCasePort,
 ) *SubscriberHandler {
 	return &SubscriberHandler{
-		climateDataRepository: climateDataRepository,
+		saveClimateDataUseCase: saveClimateDataUseCase,
 	}
 }
 
@@ -31,7 +34,7 @@ func (sh *SubscriberHandler) RunConsumer(topic string) {
 	clientOptions.SetDefaultPublishHandler(func(client mqtt.Client, msg mqtt.Message) {
 		incomingMessage := &mqttMessage{
 			topic:   msg.Topic(),
-			message: string(msg.Payload()),
+			message: msg.Payload(),
 		}
 		choke <- incomingMessage
 	})
@@ -49,7 +52,13 @@ func (sh *SubscriberHandler) RunConsumer(topic string) {
 	log.Info().Str("topic", topic).Msg("Subscribed to MQTT Broker")
 	for {
 		incoming := <-choke
-		log.Info().Msgf("Received message: %v", incoming.message)
+		log.Info().Msgf("Received message: %v", string(incoming.message))
+		err := sh.saveClimateDataUseCase.Execute(sh.ctx, incoming.message)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed processing MQTT message")
+			continue
+		}
+		log.Info().Msg("MQTT message processed successfully")
 	}
 }
 

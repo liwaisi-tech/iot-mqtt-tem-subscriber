@@ -9,7 +9,7 @@ func RunMigrations() (err error) {
 	gormDB := gormpkg.NewPostgresDBConnection()
 
 	err = gormDB.AutoMigrate(
-		&models.DevicesModel{},
+		&models.IOTDeviceModel{},
 		&models.ClimateDataModel{},
 	)
 	return
