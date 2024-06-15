@@ -6,7 +6,7 @@ import (
 )
 
 type DevicesModel struct {
-	ID         *uuid.UUID `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()"`
+	ID         *uuid.UUID `gorm:"type:uuid;primaryKey;not null"`
 	MACAddress string     `gorm:"type:varchar(17);not null;unique"`
 	gorm.Model
 }

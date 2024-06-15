@@ -6,11 +6,14 @@ import (
 )
 
 type ClimateDataModel struct {
-	ID          *uuid.UUID `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()"`
+	ID          *uuid.UUID `gorm:"type:uuid;primaryKey;not null"`
 	DeviceID    *uuid.UUID `gorm:"type:uuid;not null"`
 	Temperature float64    `gorm:"type:float;not null"`
 	Humidity    float64    `gorm:"type:float;not null"`
 	gorm.Model
+
+	// Relationships
+	Device *DevicesModel `gorm:"foreignKey:DeviceID;references:ID"`
 }
 
 func (rm *ClimateDataModel) BeforeCreate() {
