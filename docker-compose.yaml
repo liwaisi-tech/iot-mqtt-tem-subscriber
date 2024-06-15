@@ -1,32 +1,12 @@
 services:
-  mqtt5:
-    image: eclipse-mosquitto
-    container_name: mqtt5
-    ports:
-      - "1883:1883" #default mqtt port
-      - "9001:9001" #default mqtt port for websockets
-    volumes:
-      - ./config:/mosquitto/config:rw
-      - ./data:/mosquitto/data:rw
-      - ./log:/mosquitto/log:rw
+  iot-consumer:
+    build: .
+    env_file:
+      - .env
+    networks:
+      - liwaisi-shared-network
     restart: unless-stopped
-
-  postgres:
-    image: postgres:13
-    environment:
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - ./postgres-data:/var/lib/postgresql/data:rw
-    ports:
-      - "5432:5432"
-    restart: unless-stopped
-
-volumes:
-  config:
-  data:
-  log:
-  postgres-data:
-
+#create a shared network before this file execution
 networks:
-  default:
-    name: mqtt5-network
+  liwaisi-shared-network:
+    external: true
