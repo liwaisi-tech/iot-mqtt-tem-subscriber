@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	mqtthandler "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/primary/handlers/mqtt"
+	mqtthandler "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/primary/handlers/mqtt/paho"
 	climatedatarepo "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/secondary/repositories/postgres/climate_data"
 	iotdevicerepo "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/secondary/repositories/postgres/iot_device"
 	iotdevicesrv "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/secondary/services/postgres/iot_device"
@@ -21,7 +21,6 @@ var (
 
 func GetMQTTConsumer() ports.MQTTPorts {
 	once.Do(func() {
-
 		consumer = mqtthandler.New(context.Background(), getClimateDataUseCase())
 	})
 	return consumer
