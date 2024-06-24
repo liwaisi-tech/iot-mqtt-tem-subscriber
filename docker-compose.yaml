@@ -4,7 +4,7 @@ services:
     env_file:
       - .env
     ports:
-      - "${SERVICE_PORT}:${SERVICE_PORT}"
+      - "${API_REST_PORT}:${API_REST_PORT}"
     networks:
       - liwaisi-shared-network
     restart: unless-stopped
