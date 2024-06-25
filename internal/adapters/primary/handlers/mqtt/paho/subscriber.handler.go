@@ -2,43 +2,41 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	usecaseports "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/ports/usecases"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 )
 
+type HandlerMessage func(ctx context.Context, eventMessage []byte) (err error)
+
 type SubscriberHandler struct {
-	ctx                    context.Context
-	saveClimateDataUseCase usecaseports.SaveClimateDataUseCasePort
-}
-type mqttMessage struct {
-	topic   string
-	message []byte
+	ctx            context.Context
+	handlerMessage HandlerMessage
+	choke          chan mqtt.Message
 }
 
 func New(
 	ctx context.Context,
-	saveClimateDataUseCase usecaseports.SaveClimateDataUseCasePort,
+	handlerMessage HandlerMessage,
 ) *SubscriberHandler {
 	return &SubscriberHandler{
-		saveClimateDataUseCase: saveClimateDataUseCase,
+		ctx:            ctx,
+		handlerMessage: handlerMessage,
 	}
 }
 
 func (sh *SubscriberHandler) RunConsumer(topic string) {
 	qos := byte(0)
-	choke := make(chan *mqttMessage)
+	sh.choke = make(chan mqtt.Message)
 	clientOptions := getClientOptions()
-	clientOptions.SetDefaultPublishHandler(func(client mqtt.Client, msg mqtt.Message) {
-		incomingMessage := &mqttMessage{
-			topic:   msg.Topic(),
-			message: msg.Payload(),
-		}
-		choke <- incomingMessage
-	})
-
+	clientOptions.SetDefaultPublishHandler(
+		func(client mqtt.Client, msg mqtt.Message) {
+			sh.choke <- msg
+		},
+	)
 	client := mqtt.NewClient(clientOptions)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
 		log.Fatal().Err(token.Error()).Msg("Error connecting to MQTT Broker")
@@ -51,9 +49,9 @@ func (sh *SubscriberHandler) RunConsumer(topic string) {
 	}
 	log.Info().Str("topic", topic).Msg("Subscribed to MQTT Broker")
 	for {
-		incoming := <-choke
-		log.Info().Msgf("Received message: %v", string(incoming.message))
-		err := sh.saveClimateDataUseCase.Execute(sh.ctx, incoming.message)
+		incoming := <-sh.choke
+		log.Info().Str("topic", "").Msgf("Received message: %v", string(incoming.Payload()))
+		err := sh.handlerMessage(sh.ctx, incoming.Payload())
 		if err != nil {
 			log.Error().Err(err).Msg("Failed processing MQTT message")
 			continue
@@ -65,7 +63,7 @@ func (sh *SubscriberHandler) RunConsumer(topic string) {
 func getClientOptions() (clientOptions *mqtt.ClientOptions) {
 	clientOptions = mqtt.NewClientOptions()
 	clientOptions.AddBroker(os.Getenv("MQTT_BROKER"))
-	clientOptions.SetClientID(os.Getenv("MQTT_CLIENT_ID"))
+	clientOptions.SetClientID(fmt.Sprintf("%s-%s", os.Getenv("MQTT_CLIENT_ID"), uuid.New().String()))
 	clientOptions.SetUsername(os.Getenv("MQTT_USERNAME"))
 	clientOptions.SetPassword(os.Getenv("MQTT_PASSWORD"))
 	clientOptions.SetCleanSession(true)

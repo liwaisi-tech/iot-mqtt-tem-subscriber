@@ -1,8 +1,6 @@
 package main
 
 import (
-	"os"
-
 	_ "github.com/joho/godotenv/autoload"
 
 	httpconfig "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/infraestructure/config/http/echo"
@@ -14,6 +12,7 @@ import (
 func main() {
 	zerologpkg.LoadLogger()
 	migrations.RunMigrations()
-	go mqttconfig.GetMQTTConsumer().RunConsumer(os.Getenv("MQTT_TOPIC"))
+	mqttconfig.InitConsumers()
+	mqttconfig.RunConsumers()
 	httpconfig.NewEchoAPIRestAdapter().RunServer()
 }
