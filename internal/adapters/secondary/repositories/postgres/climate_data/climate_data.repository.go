@@ -3,7 +3,7 @@ package repositories
 import (
 	"context"
 
-	"github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/secondary/repositories/mappers"
+	"github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/secondary/mappers"
 	entities "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/domain/entities/climate_data"
 	"gorm.io/gorm"
 )

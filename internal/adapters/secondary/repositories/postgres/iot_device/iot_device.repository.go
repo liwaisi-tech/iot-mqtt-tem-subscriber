@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 
 	models "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/infraestructure/database/models/postgres"
-	mappers "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/secondary/repositories/mappers"
+	mappers "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/secondary/mappers"
 	entities "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/domain/entities/iot_device"
 )
 

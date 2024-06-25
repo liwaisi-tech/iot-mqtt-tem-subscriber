@@ -9,7 +9,7 @@ import (
 	climatedatarepo "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/secondary/repositories/postgres/climate_data"
 	iotdevicerepo "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/secondary/repositories/postgres/iot_device"
 	iotdevicesrv "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/secondary/services/postgres/iot_device"
-	usecases "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/application/usecases"
+	usecasessave "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/application/usecases/save_climate_data"
 	ports "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/ports/events/mqtt"
 	gormpkg "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/pkg/gorm/postgres"
 )
@@ -41,6 +41,6 @@ func getClimateDataConsumer() ports.MQTTPorts {
 
 	iotDeviceService := iotdevicesrv.New(gormDB)
 
-	useCase := usecases.New(climateDataRepo, iotDeviceRepo, iotDeviceService)
+	useCase := usecasessave.New(climateDataRepo, iotDeviceRepo, iotDeviceService)
 	return mqtthandler.New(context.Background(), useCase.Execute)
 }
