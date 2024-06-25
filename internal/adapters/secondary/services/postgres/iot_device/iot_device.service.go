@@ -4,7 +4,7 @@ import (
 	"context"
 
 	models "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/infraestructure/database/models/postgres"
-	"github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/secondary/repositories/mappers"
+	"github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/adapters/secondary/mappers"
 	entities "github.com/liwaisi-tech/iot-mqtt-tem-subscriber/internal/domain/entities/iot_device"
 	"gorm.io/gorm"
 )

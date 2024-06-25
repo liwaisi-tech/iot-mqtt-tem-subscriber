@@ -34,3 +34,17 @@ func MapClimateDataEntityToModel(entity *entities.ClimateDataEntity) (model *mod
 	}
 	return
 }
+
+func MapClimateDataModelToEntity(model *models.ClimateDataModel) (entity *entities.ClimateDataEntity) {
+	if model == nil {
+		return nil
+	}
+	entity = &entities.ClimateDataEntity{
+		ID:          model.ID.String(),
+		Temperature: model.Temperature,
+		Humidity:    model.Humidity,
+		DeviceID:    model.DeviceID.String(),
+		CreatedAt:   model.CreatedAt,
+	}
+	return
+}
