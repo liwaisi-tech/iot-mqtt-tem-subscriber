@@ -7,6 +7,9 @@ import (
 )
 
 func MapIOTDeviceEntityToModel(entity *entities.IOTDeviceEntity) (model *models.IOTDeviceModel, err error) {
+	if entity == nil {
+		return nil, nil
+	}
 	var entityID uuid.UUID
 	if entity.ID != "" {
 		entityID, err = uuid.Parse(entity.ID)
