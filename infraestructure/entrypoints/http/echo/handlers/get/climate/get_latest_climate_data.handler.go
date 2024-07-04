@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -30,8 +31,8 @@ func mapEntityResponse(entity *entities.ClimateDataEntity) map[string]interface{
 		loc = time.UTC
 	}
 	return map[string]interface{}{
-		"temperature":   entity.Temperature,
-		"humidity":      entity.Humidity,
+		"temperature":   fmt.Sprintf("%.2f°C", entity.Temperature),
+		"humidity":      fmt.Sprintf("%.2f%%", entity.Humidity),
 		"last_datetime": entity.CreatedAt.In(loc).Format("2006-01-02 03:04:05 pm"),
 	}
 }
