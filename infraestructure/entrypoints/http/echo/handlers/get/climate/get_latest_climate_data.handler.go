@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
 
@@ -24,9 +25,13 @@ func GetClimateDataHandler(
 }
 
 func mapEntityResponse(entity *entities.ClimateDataEntity) map[string]interface{} {
+	loc, err := time.LoadLocation("America/Bogota")
+	if err != nil {
+		loc = time.UTC
+	}
 	return map[string]interface{}{
 		"temperature":   entity.Temperature,
 		"humidity":      entity.Humidity,
-		"last_datetime": entity.CreatedAt.Format("2006-01-02 15:04:05"),
+		"last_datetime": entity.CreatedAt.In(loc).Format("2006-01-02 03:04:05 pm"),
 	}
 }
